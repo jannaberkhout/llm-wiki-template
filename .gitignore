@@ -1,0 +1,6 @@
+.obsidian/*
+.DS_Store
+.env
+.venv/
+schema/clipper-templates/*
+!schema/clipper-templates/_base.json

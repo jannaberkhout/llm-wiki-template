@@ -1,0 +1,67 @@
+{
+  "_uitleg": "Enige bron van waarheid voor de mappenstructuur onder wiki/. Pas aan via de setup-structuur skill en draai daarna `uv run .agents/skills/setup-structuur/setup_structuur.py apply`. Zie die SKILL.md voor de velden.",
+  "types": [
+    {
+      "key": "projecten",
+      "label": "Project",
+      "label_plural": "Projecten",
+      "omschrijving": "Eén submap per project: de projectpagina plus bijbehorend onderzoek en bijlagen.",
+      "kort": "één submap per project",
+      "layout": "dossier",
+      "naamconventie": "<slug>/index.md",
+      "submappen": [
+        "research",
+        "bijlagen"
+      ],
+      "template": "project-template.md",
+      "validate": true,
+      "fields": [],
+      "in_index": true,
+      "index_columns": [
+        "Laatste besluit"
+      ]
+    },
+    {
+      "key": "besluiten",
+      "label": "Besluit",
+      "label_plural": "Besluiten",
+      "omschrijving": "Besluiten per project: wat is besloten, door wie (rollen), op basis van welke argumenten en wat is de volgende stap.",
+      "kort": "besluiten per project",
+      "layout": "bestand",
+      "naamconventie": "YYYY-MM-DD-<project-slug>-<korte-omschrijving>.md",
+      "template": "besluit-template.md",
+      "validate": true,
+      "fields": [
+        {
+          "name": "project",
+          "hint": "slug van het bijbehorende project",
+          "required": true
+        },
+        {
+          "name": "besluit",
+          "hint": "go | no-go | parkeren | stoppen | aanpassen",
+          "required": true
+        },
+        {
+          "name": "datum",
+          "hint": "YYYY-MM-DD",
+          "required": true
+        }
+      ],
+      "in_index": false
+    },
+    {
+      "key": "werkwijze",
+      "label": "Werkwijze",
+      "label_plural": "Werkwijze",
+      "omschrijving": "Hoe het team werkt: processen, rollen, afspraken, principes.",
+      "kort": "hoe het team werkt: processen, rollen, afspraken, principes",
+      "layout": "bestand",
+      "naamconventie": "<onderwerp>.md",
+      "template": null,
+      "validate": false,
+      "fields": [],
+      "in_index": false
+    }
+  ]
+}

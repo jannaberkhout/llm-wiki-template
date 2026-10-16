@@ -1,0 +1,6 @@
+[project]
+name = "wiki-skills"
+version = "0.1.0"
+description = "Helper scripts for .agents/skills/ (lint, onboard-contributor). Stdlib-only, no dependencies -- this file exists so `uv run` has a project to pin a Python version to."
+requires-python = ">=3.11"
+dependencies = []

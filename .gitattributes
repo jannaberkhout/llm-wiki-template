@@ -1,0 +1,2 @@
+# Append-only files: keep both sides on merge instead of producing a conflict marker
+wiki/log.md merge=union

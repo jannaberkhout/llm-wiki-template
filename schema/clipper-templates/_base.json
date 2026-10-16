@@ -1,0 +1,19 @@
+{
+	"schemaVersion": "0.1.0",
+	"name": "Wiki",
+	"behavior": "create",
+	"noteContentFormat": "{{content}}",
+	"properties": [
+		{
+			"name": "context",
+			"value": "webclipping"
+		},
+		{
+			"name": "contributor",
+			"value": "CONTRIBUTOR_NAME"
+		}
+	],
+	"triggers": [],
+	"noteNameFormat": "{{date}}-{{title}}",
+	"path": "raw"
+}
