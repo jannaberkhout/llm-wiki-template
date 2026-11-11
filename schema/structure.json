@@ -1,0 +1,67 @@
+{
+  "_explanation": "Single source of truth for the folder structure under wiki/. Change it via the setup-structure skill, then run `uv run .agents/skills/setup-structure/setup_structure.py apply`. See that SKILL.md for the fields.",
+  "types": [
+    {
+      "key": "projects",
+      "label": "Project",
+      "label_plural": "Projects",
+      "description": "One subfolder per project: the project page plus related research and attachments.",
+      "short": "one subfolder per project",
+      "layout": "folder",
+      "naming": "<slug>/index.md",
+      "subfolders": [
+        "research",
+        "attachments"
+      ],
+      "template": "project-template.md",
+      "validate": true,
+      "fields": [],
+      "in_index": true,
+      "index_columns": [
+        "Latest decision"
+      ]
+    },
+    {
+      "key": "decisions",
+      "label": "Decision",
+      "label_plural": "Decisions",
+      "description": "Decisions per project: what was decided, by whom (roles), based on which arguments and what the next step is.",
+      "short": "decisions per project",
+      "layout": "file",
+      "naming": "YYYY-MM-DD-<project-slug>-<short-description>.md",
+      "template": "decision-template.md",
+      "validate": true,
+      "fields": [
+        {
+          "name": "project",
+          "hint": "slug of the related project",
+          "required": true
+        },
+        {
+          "name": "decision",
+          "hint": "go | no-go | park | stop | adjust",
+          "required": true
+        },
+        {
+          "name": "date",
+          "hint": "YYYY-MM-DD",
+          "required": true
+        }
+      ],
+      "in_index": false
+    },
+    {
+      "key": "ways-of-working",
+      "label": "Ways of working",
+      "label_plural": "Ways of working",
+      "description": "How the team works: processes, roles, agreements, principles.",
+      "short": "how the team works: processes, roles, agreements, principles",
+      "layout": "file",
+      "naming": "<topic>.md",
+      "template": null,
+      "validate": false,
+      "fields": [],
+      "in_index": false
+    }
+  ]
+}

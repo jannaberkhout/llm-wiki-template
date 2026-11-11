@@ -5,44 +5,44 @@ description: Onboard a new contributor: create inbox, generate clipper template,
 
 # Skill: onboard-contributor
 
-Onboard een nieuwe bijdrager. Maakt de lokale inboxmap aan (`../inbox/` — raw/processed/staging, nooit git), genereert een persoonlijke Obsidian Web Clipper-template en print een kant-en-klaar welkomstbericht.
+Onboard a new contributor. Creates the local inbox folder (`../inbox/` — raw/processed/staging, never git), generates a personal Obsidian Web Clipper template and prints a ready-made welcome message.
 
-## Wanneer gebruiken
+## When to use
 
-Draai deze skill als een nieuw teamlid ruw materiaal gaat bijdragen aan de wiki.
+Run this skill when a new team member is going to contribute raw material to the wiki.
 
-## Invoer
+## Input
 
-Vraag de bijdrager als niet opgegeven:
+Ask the contributor if not provided:
 
-1. **Naam** — voornaam in lowercase, zonder spaties (bijv. `jan`, `fatima`).
-2. **Rol** — `contributor` (draait skills, voegt notities toe; bewerkt wikibestanden en skills niet direct) of `curator` (mag skills en wiki direct bewerken en keurt merge requests goed). Standaard: `contributor`.
+1. **Name** — first name in lowercase, without spaces (e.g. `jan`, `fatima`).
+2. **Role** — `contributor` (runs skills, adds notes; does not edit wiki files and skills directly) or `curator` (may edit skills and the wiki directly and approves merge requests). Default: `contributor`.
 
-Normaliseer namen met spaties of hoofdletters naar lowercase-met-koppeltekens (bijv. `Jan de Vries` → `jan-de-vries`). Bevestig dit bij de gebruiker voordat je doorgaat.
+Normalize names with spaces or capitals to lowercase-with-hyphens (e.g. `Jan de Vries` → `jan-de-vries`). Confirm this with the user before continuing.
 
-## Benodigde tools
+## Required tools
 
-| Tool | Waarvoor |
+| Tool | Used for |
 |---|---|
-| Git | Claude Code gebruikt het voor de wikirepo |
-| uv | Python-omgeving voor de helperscripts van de skills |
-| `glab` of `gh` | De share skill gebruikt dit om merge requests aan te maken |
-| Obsidian | Notities schrijven en conceptpagina's beoordelen |
-| Obsidian Web Clipper | Webpagina's opslaan in de inbox |
+| Git | Claude Code uses it for the wiki repo |
+| uv | Python environment for the skills' helper scripts |
+| `glab` or `gh` | The share skill uses this to create merge requests |
+| Obsidian | Writing notes and reviewing draft pages |
+| Obsidian Web Clipper | Saving web pages to the inbox |
 
-Bijdragers gebruiken git niet zelf: de skills regelen alle git-operaties op de wikirepo (het enige repo in dit systeem; `../inbox/` is een gewone map zonder git). Voor `glab`/`gh` logt de bijdrager eenmalig zelf in. Een token mag nooit in de chat met Claude Code terechtkomen.
+Contributors do not use git themselves: the skills handle all git operations on the wiki repo (the only repo in this system; `../inbox/` is a plain folder without git). For `glab`/`gh` the contributor logs in once themselves. A token must never end up in the chat with Claude Code.
 
-## Stappen
+## Steps
 
-### 0. Zorg dat uv geïnstalleerd is
+### 0. Make sure uv is installed
 
-De helperscripts van deze skills draaien via [uv](https://docs.astral.sh/uv/). Dat regelt zelf een Python-installatie, dus de bijdrager heeft geen systeem-Python nodig. Controleer of het al aanwezig is:
+The helper scripts of these skills run through [uv](https://docs.astral.sh/uv/). It takes care of a Python installation itself, so the contributor does not need a system Python. Check whether it is already present:
 
 ```bash
 uv --version
 ```
 
-Zo niet, installeer het:
+If not, install it:
 
 ```bash
 # mac / linux
@@ -52,54 +52,54 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-Daarna is geen aparte installatiestap voor Python nodig: `uv run <script>.py` zet bij eerste gebruik de juiste Python-versie (gepind via `.python-version` en `pyproject.toml`) en een `.venv` klaar.
+After that no separate Python installation step is needed: `uv run <script>.py` sets up the right Python version (pinned via `.python-version` and `pyproject.toml`) and a `.venv` on first use.
 
-### 1. Zorg dat de git-CLI geïnstalleerd en geauthenticeerd is
+### 1. Make sure the git CLI is installed and authenticated
 
-De share skill maakt automatisch een merge request aan. Zonder een ingelogde CLI faalt die stap. Controleer `glab --version` (GitLab) of `gh --version` (GitHub) en installeer zo nodig:
+The share skill creates a merge request automatically. Without a logged-in CLI that step fails. Check `glab --version` (GitLab) or `gh --version` (GitHub) and install if needed:
 
 ```bash
 # mac
-brew install glab    # of: brew install gh
+brew install glab    # or: brew install gh
 
 # windows (scoop)
-scoop install glab   # of: scoop install gh
+scoop install glab   # or: scoop install gh
 ```
 
-Inloggen doet de bijdrager zelf, in een eigen terminal en niet via Claude Code. Een token is een geheim; plakt iemand het in de chat, dan staat het voorgoed in het sessietranscript.
+The contributor logs in themselves, in their own terminal and not via Claude Code. A token is a secret; if someone pastes it in the chat, it stays in the session transcript forever.
 
 ```bash
 glab auth login --hostname <GIT-HOST>
-# of
+# or
 gh auth login
 ```
 
-Controleer samen dat het gelukt is met `glab auth status` of `gh auth status`.
+Check together that it worked with `glab auth status` or `gh auth status`.
 
-### 2. Draai het onboardingscript
+### 2. Run the onboarding script
 
-De overige stappen (inboxmap, Obsidian-instellingen, clipper-template, logregel, welkomstbericht) zijn pure templating zonder oordeelsvorming. Draai in plaats van ze met de hand te doen:
+The remaining steps (inbox folder, Obsidian settings, clipper template, log row, welcome message) are pure templating without judgment. Run this instead of doing them by hand:
 
 ```bash
 uv run .agents/skills/onboard-contributor/onboard_contributor.py \
-  --naam <naam> --rol <contributor|curator>
+  --name <name> --role <contributor|curator>
 ```
 
-Het script:
-- normaliseert de naam (bevestig dit bij de bijdrager als het afwijkt van de ruwe invoer)
-- maakt `../inbox/raw/`, `../inbox/processed/`, `../inbox/staging/` en `../inbox/templates/` aan naast deze repo (of meldt dat ze al bestaan): puur lokaal, geen git
-- kopieert `schema/obsidian-templates/inbox-note.md` naar `../inbox/templates/inbox-note.md` (alleen als die nog niet bestaat)
-- kopieert `schema/obsidian-templates/{app,templates,hotkeys}.json` naar `../inbox/.obsidian/` (lokaal, niet gecommit; wordt altijd overschreven)
-- genereert `schema/clipper-templates/wiki-clipper-<naam>.json` uit `_base.json` (stempelt elke clip met `contributor: <naam>` in de frontmatter)
-- voegt een rij toe aan `wiki/log.md` (direct onder de scheidingsregel, met de datum van vandaag)
-- print het complete welkomstbericht (geef dit letterlijk door aan de bijdrager) en een samenvatting van wat is aangemaakt
+The script:
+- normalizes the name (confirm this with the contributor if it differs from the raw input)
+- creates `../inbox/raw/`, `../inbox/processed/`, `../inbox/staging/` and `../inbox/templates/` next to this repo (or reports that they already exist): purely local, no git
+- copies `schema/obsidian-templates/inbox-note.md` to `../inbox/templates/inbox-note.md` (only if it does not exist yet)
+- copies `schema/obsidian-templates/{app,templates,hotkeys}.json` to `../inbox/.obsidian/` (local, not committed; always overwritten)
+- generates `schema/clipper-templates/wiki-clipper-<name>.json` from `_base.json` (stamps every clip with `contributor: <name>` in the frontmatter)
+- adds a row to `wiki/log.md` (directly below the separator row, with today's date)
+- prints the complete welcome message (pass this on verbatim to the contributor) and a summary of what was created
 
-Gebruik `--dry-run` om te previewen zonder te schrijven. Een echte run overschrijft de machinelokale `.obsidian`-config, wat maar voor één persoon per keer geldt.
+Use `--dry-run` to preview without writing. A real run overwrites the machine-local `.obsidian` config, which should only happen once per person.
 
-Bij `--rol curator` print het script een aparte waarschuwing dat de "wat je wél/niet doet"-sectie in het welkomstbericht voor bijdragers is geschreven. Pas die sectie handmatig aan voor een curator (die mag `wiki/` en `.agents/skills/` wél direct bewerken en MR's goedkeuren).
+With `--role curator` the script prints a separate warning that the "what you do / don't do" section in the welcome message is written for contributors. Adjust that section manually for a curator (who may edit `wiki/` and `.agents/skills/` directly and approve MRs).
 
-## Randgevallen
+## Edge cases
 
-- **Naam bestaat al:** het script detecteert dit zelf (slaat het aanmaken van de inboxmappen over als ze al bestaan, genereert de clipper-template opnieuw en logt "inbox bestond al"). Elke bijdrager onboardt op de eigen machine, dus `../inbox/` is niet per naam: het bestaan ervan betekent alleen dat déze machine al eerder is ingericht.
-- **Naam met spaties of hoofdletters:** normaliseer naar lowercase-met-koppeltekens en bevestig dit bij de gebruiker voordat je doorgaat.
-- **Eerste clone:** is de repo nog niet gekloond op de machine van de bijdrager, gebruik dan `git clone <REPO-URL>`. Dit is eenmalig; `../inbox/` heeft geen git en wordt door het onboardingscript zelf aangemaakt.
+- **Name already exists:** the script detects this itself (skips creating the inbox folders if they already exist, regenerates the clipper template and logs "inbox already existed"). Every contributor onboards on their own machine, so `../inbox/` is not per name: its existence only means that this machine has been set up before.
+- **Name with spaces or capitals:** normalize to lowercase-with-hyphens and confirm this with the user before continuing.
+- **First clone:** if the repo has not been cloned on the contributor's machine yet, use `git clone <REPO-URL>`. This is a one-time step; `../inbox/` has no git and is created by the onboarding script itself.

@@ -5,125 +5,125 @@ description: Run a health check on the wiki and produce a prioritised report of 
 
 # Skill: lint
 
-Draai een gezondheidscheck op de wiki en maak een geprioriteerd rapport van structurele en semantische problemen. Bedoeld om maandelijks te draaien en kort in het team te bespreken.
+Run a health check on the wiki and produce a prioritised report of structural and semantic issues. Meant to run monthly and be discussed briefly with the team.
 
-## Wanneer gebruiken
+## When to use
 
-- Maandelijks, als onderdeel van het ritme van lint + retro
-- Voordat je een grote batch pagina's naar main promoveert
-- Op verzoek, als de curator drift of inconsistentie vermoedt
+- Monthly, as part of the lint + retro rhythm
+- Before promoting a large batch of pages to main
+- On request, when the curator suspects drift or inconsistency
 
-## Uitvoer
+## Output
 
-Een gestructureerd rapport met bevindingen per ernst. Sla het op als `wiki/lint/YYYY-MM-DD-lint-report.md` en voeg een regel toe aan `wiki/log.md`. Los bevindingen niet automatisch op: rapporteer alleen, zodat de curator beslist wat er gebeurt.
-
----
-
-## Controles
-
-Draai alle onderstaande controles op volgorde. Verzamel alle bevindingen voordat je het rapport schrijft.
-
-**De structurele controles (S1-S6) zijn geautomatiseerd.** Draai `uv run .agents/skills/lint/check_structure.py` vanuit de repo-root en gebruik de uitvoer direct. Leid S1-S6 niet opnieuw af door bestanden met de hand te lezen: dat kost tokens zonder winst. Het script heeft naast stdlib-Python 3 geen dependencies. Ziet de uitvoer er verkeerd uit, repareer dan het script in plaats van terug te vallen op handmatig controleren.
-
-**Contenttypes:** de begrippen project, projectmap en besluit in deze skill zijn de types uit de standaardtemplate. De werkelijke types van dit team staan in `schema/structuur.json`; lees "project" als een dossiertype met `in_index: true` en "besluit" als de losse documenten (`layout: bestand`). Het script doet dit al vanzelf.
-
-Alleen de semantische controles (M1-M3) vragen dat je de inhoud van pagina's leest, omdat ze oordeelsvorming vragen die het script niet kan geven. Beperk ook daar je leeswerk: lees alleen de pagina's binnen het project of de sectie die je controleert, niet de hele wiki tegelijk.
+A structured report with findings by severity. Save it as `wiki/lint/YYYY-MM-DD-lint-report.md` and add a row to `wiki/log.md`. Do not fix findings automatically: only report, so the curator decides what happens.
 
 ---
 
-### Structurele controles
+## Checks
 
-#### S1 — Gebroken wikilinks
+Run all checks below in order. Collect all findings before writing the report.
 
-Scan elk `.md`-bestand onder `wiki/` op `[[...]]`-patronen. Controleer per link of er ergens onder `wiki/` een bestand met die naam bestaat. Markeer elke link waarvan het doel niet te vinden is.
+**The structural checks (S1-S6) are automated.** Run `uv run .agents/skills/lint/check_structure.py` from the repo root and use the output directly. Do not re-derive S1-S6 by reading files by hand: that costs tokens for no gain. Apart from stdlib Python 3, the script has no dependencies. If the output looks wrong, fix the script instead of falling back to manual checking.
 
-Ernst: **blocker** — gebroken links verwarren agents en lezers.
+**Content types:** the terms project, project folder and decision in this skill are the types from the default template. This team's actual types are in `schema/structure.json`; read "project" as a `layout: folder` type with `in_index: true` and "decision" as the individual documents (`layout: file`). The script already does this automatically.
 
-#### S2 — Weespagina's
-
-Maak een lijst van alle `.md`-bestanden onder `wiki/` (behalve `index.md`, `log.md` en `README.md`). Controleer per bestand of er minstens één andere pagina of `wiki/index.md` naar linkt. Markeer elk bestand zonder inkomende links.
-
-Ernst: **warning** — weespagina's zijn onvindbaar en waarschijnlijk vergeten.
-
-#### S3 — Schemaschendingen
-
-Controleer voor elk `.md`-bestand onder de mappen van de types met `validate: true` in `schema/structuur.json` (standaard `wiki/projecten/` en `wiki/besluiten/`; behalve `README.md`) of de volgende frontmattervelden aanwezig en niet leeg zijn:
-
-- Alle pagina's: `title`, `status`, `tags`, `date-created`, `contributed-by`
-- Extra verplichte velden per type: de velden met `required: true` bij `fields` in `structuur.json` (standaard bij besluiten: `project`, `besluit`, `datum`)
-
-Markeer elke pagina met ontbrekende of lege verplichte velden.
-
-Ernst: **warning** — onvolledige metadata breekt indexupdates en agent-routing.
-
-#### S4 — Indexconsistentie
-
-Vergelijk de submappen van `wiki/projecten/` met de projectentabel in `wiki/index.md`. Markeer:
-- Een projectmap met `index.md` die niet in de indextabel staat
-- Een rij in de indextabel zonder bijbehorende projectmap
-
-Ernst: **warning** — de index is het dashboard van het team; drift maakt hem onbetrouwbaar.
-
-#### S5 — Statusmismatch
-
-Vergelijk voor elke projectpagina het veld `status` in de frontmatter met de statuskolom in `wiki/index.md`. Markeer elke afwijking.
-
-Ernst: **warning** — de index hoort altijd de huidige paginastatus te tonen.
-
-#### S6 — Onopgeloste conflicten
-
-Zoek alle `.md`-bestanden onder `wiki/` met `status: conflict` in de frontmatter. Toon ze als pagina's die de curator moet oplossen.
-
-Ernst: **blocker** — conflictpagina's mogen nooit onopgelost op main komen.
+Only the semantic checks (M1-M3) require you to read page content, because they call for judgment the script cannot give. Limit your reading there too: only read the pages within the project or section you are checking, not the whole wiki at once.
 
 ---
 
-### Semantische controles
+### Structural checks
 
-Draai deze na alle structurele controles. Lees de relevante pagina's zorgvuldig voordat je een oordeel velt.
+#### S1 — Broken wikilinks
 
-#### M1 — Tegenspraken binnen een projectdossier
+Scan every `.md` file under `wiki/` for `[[...]]` patterns. For each link, check whether a file with that name exists anywhere under `wiki/`. Flag every link whose target cannot be found.
 
-Lees voor elke submap onder `wiki/projecten/` alle pagina's. Controleer of claims elkaar tegenspreken, bijvoorbeeld: de status in de tabel onder Verloop botst met de `status` in de frontmatter, of twee vermeldingen trekken tegengestelde conclusies over dezelfde vraag.
+Severity: **blocker** — broken links confuse agents and readers.
 
-Markeer concrete tegenspraken met een citaat uit elke botsende passage.
+#### S2 — Orphan pages
 
-Ernst: **warning** — tegenspraken misleiden het team en agents.
+List all `.md` files under `wiki/` (except `index.md`, `log.md` and `README.md`). For each file, check whether at least one other page or `wiki/index.md` links to it. Flag every file without incoming links.
 
-#### M2 — Tegenspraken tussen pagina's
+Severity: **warning** — orphan pages are impossible to find and probably forgotten.
 
-Lees alle pagina's onder `wiki/projecten/` en `wiki/besluiten/`. Zoek paren pagina's die directe tegenstrijdige claims doen over hetzelfde begrip, dezelfde afspraak of dezelfde projectstatus. Voorbeeld: een besluit zegt dat een project is gestopt, terwijl de projectpagina `actief` toont.
+#### S3 — Schema violations
 
-Beperk het bereik: markeer alleen duidelijke, specifieke tegenspraken, geen verschillen in nadruk of perspectief. Bij twijfel: niet markeren.
+For every `.md` file under the folders of the types with `validate: true` in `schema/structure.json` (by default `wiki/projects/` and `wiki/decisions/`; excluding `README.md`), check whether the following frontmatter fields are present and non-empty:
 
-Ernst: **advisory** — drift tussen pagina's hoort bij een groeiende wiki; markeer alleen duidelijke gevallen.
+- All pages: `title`, `status`, `tags`, `date-created`, `contributed-by`
+- Extra required fields per type: the fields with `required: true` under `fields` in `structure.json` (by default for decisions: `project`, `decision`, `date`)
 
-#### M3 — Verouderde claims
+Flag every page with missing or empty required fields.
 
-Zoek claims die waarschijnlijk achterhaald zijn gezien andere inhoud in de wiki, bijvoorbeeld een pagina die iets "nog uit te werken" of "in ontwikkeling" noemt terwijl een andere pagina laat zien dat het af of verlaten is.
+Severity: **warning** — incomplete metadata breaks index updates and agent routing.
 
-Markeer de specifieke claim en de pagina die haar tegenspreekt.
+#### S4 — Index consistency
 
-Ernst: **advisory** — verouderde claims verlagen na verloop van tijd het vertrouwen in de wiki.
+Compare the subfolders of `wiki/projects/` with the projects table in `wiki/index.md`. Flag:
+- A project folder with `index.md` that is not in the index table
+- A row in the index table without a corresponding project folder
+
+Severity: **warning** — the index is the team's dashboard; drift makes it unreliable.
+
+#### S5 — Status mismatch
+
+For every project page, compare the `status` field in the frontmatter with the status column in `wiki/index.md`. Flag every deviation.
+
+Severity: **warning** — the index should always show the current page status.
+
+#### S6 — Unresolved conflicts
+
+Find all `.md` files under `wiki/` with `status: conflict` in the frontmatter. Show them as pages the curator must resolve.
+
+Severity: **blocker** — conflict pages must never reach main unresolved.
 
 ---
 
-## Rapportformaat
+### Semantic checks
 
-Sla op als `wiki/lint/YYYY-MM-DD-lint-report.md`:
+Run these after all structural checks. Read the relevant pages carefully before passing judgment.
+
+#### M1 — Contradictions within a project case
+
+For every subfolder under `wiki/projects/`, read all pages. Check whether claims contradict each other, for example: the status in the table under History clashes with the `status` in the frontmatter, or two entries draw opposite conclusions about the same question.
+
+Flag concrete contradictions with a quote from each clashing passage.
+
+Severity: **warning** — contradictions mislead the team and agents.
+
+#### M2 — Contradictions between pages
+
+Read all pages under `wiki/projects/` and `wiki/decisions/`. Look for pairs of pages that make directly contradictory claims about the same concept, the same agreement or the same project status. Example: a decision says a project has been stopped, while the project page shows `active`.
+
+Limit the scope: only flag clear, specific contradictions, not differences in emphasis or perspective. When in doubt: do not flag.
+
+Severity: **advisory** — drift between pages comes with a growing wiki; only flag clear cases.
+
+#### M3 — Outdated claims
+
+Look for claims that are probably outdated given other content in the wiki, for example a page that calls something "still to be worked out" or "in development" while another page shows it is finished or abandoned.
+
+Flag the specific claim and the page that contradicts it.
+
+Severity: **advisory** — outdated claims erode trust in the wiki over time.
+
+---
+
+## Report format
+
+Save as `wiki/lint/YYYY-MM-DD-lint-report.md`:
 
 ```markdown
 ---
-title: Lint rapport YYYY-MM-DD
+title: Lint report YYYY-MM-DD
 generated-by: <model>, YYYY-MM-DD
 tags: [lint]
 ---
 
-# Lint rapport YYYY-MM-DD
+# Lint report YYYY-MM-DD
 
-## Samenvatting
+## Summary
 
-| Ernst | Aantal |
+| Severity | Count |
 |---|---|
 | Blocker | n |
 | Warning | n |
@@ -131,50 +131,50 @@ tags: [lint]
 
 ## Blockers
 
-### [S6] Onopgeloste conflictpagina's
-- `wiki/projecten/llm-wiki/index.md` — status: conflict
+### [S6] Unresolved conflict pages
+- `wiki/projects/llm-wiki/index.md` — status: conflict
 
 ## Warnings
 
-### [S2] Weespagina's
-- `wiki/projecten/llm-wiki/research/notitie.md` — geen inkomende links
+### [S2] Orphan pages
+- `wiki/projects/llm-wiki/research/note.md` — no incoming links
 
-### [S3] Schemaschendingen
-- `wiki/besluiten/2026-07-29-llm-wiki-start-pilot.md` — veld `datum` leeg
+### [S3] Schema violations
+- `wiki/decisions/2026-07-29-llm-wiki-start-pilot.md` — field `date` empty
 
-### [S4] Indexinconsistentie
-- `wiki/projecten/nieuw-project/index.md` — staat niet in wiki/index.md
+### [S4] Index inconsistency
+- `wiki/projects/new-project/index.md` — not in wiki/index.md
 
 ## Advisories
 
-### [M3] Verouderde claims
-- `wiki/projecten/llm-wiki/index.md` — "pilot nog uit te werken" terwijl het besluit van 2026-07-29 de start vastlegt
+### [M3] Outdated claims
+- `wiki/projects/llm-wiki/index.md` — "pilot still to be worked out" while the decision of 2026-07-29 records the start
 
-## Geen bevindingen
+## No findings
 
-S1 (gebroken links): geen
-M1 (interne tegenspraken): geen
-M2 (tegenspraken tussen pagina's): geen
+S1 (broken links): none
+M1 (internal contradictions): none
+M2 (contradictions between pages): none
 ```
 
 ---
 
-## Na het rapport
+## After the report
 
-Voeg een rij toe direct onder de koprij in `wiki/log.md`:
+Add a row directly below the header row in `wiki/log.md`:
 ```
-| YYYY-MM-DD | lint | — | <n> blockers, <n> warnings, <n> advisories — zie wiki/lint/YYYY-MM-DD-lint-report.md |
-```
-
-Commit of push niet automatisch. Zeg tegen de curator:
-
-```
-Lint rapport opgeslagen in wiki/lint/YYYY-MM-DD-lint-report.md.
-Bekijk het rapport en commit wanneer je klaar bent, of zeg "commit de lint report".
+| YYYY-MM-DD | lint | — | <n> blockers, <n> warnings, <n> advisories — see wiki/lint/YYYY-MM-DD-lint-report.md |
 ```
 
-## Randgevallen
+Do not commit or push automatically. Tell the curator:
 
-- **Lege wiki:** bestaan er minder dan 5 pagina's, sla de semantische controles (M1–M3) dan over en noteer "te weinig content voor semantische analyse" in het rapport.
-- **Onzekere tegenspraak:** bij twijfel bij M1–M3 niet markeren. Valse positieven schaden het vertrouwen in het lintrapport sneller dan gemiste bevindingen.
-- **Grote wiki (50+ pagina's):** beperk M2 en M3 tot pagina's die de afgelopen 90 dagen zijn bijgewerkt, zodat de controle hanteerbaar blijft. Noteer die beperking in het rapport.
+```
+Lint report saved in wiki/lint/YYYY-MM-DD-lint-report.md.
+Review the report and commit when you are ready, or say "commit the lint report".
+```
+
+## Edge cases
+
+- **Empty wiki:** if there are fewer than 5 pages, skip the semantic checks (M1–M3) and note "too little content for semantic analysis" in the report.
+- **Uncertain contradiction:** when in doubt on M1–M3, do not flag. False positives damage trust in the lint report faster than missed findings.
+- **Large wiki (50+ pages):** limit M2 and M3 to pages updated in the last 90 days so the check stays manageable. Note that limitation in the report.

@@ -5,145 +5,145 @@ description: Promote reviewed draft pages from staging to the wiki repo and push
 
 # Skill: share
 
-Promoveer beoordeelde conceptpagina's uit `../inbox/staging/` naar de wikirepo en push ze naar een gedateerde ingest-branch voor beoordeling door de curator. Dit is de expliciete deelbeslissing: niets bereikt de wikirepo voordat deze skill draait. `../inbox/` heeft geen git. De enige git-operaties in deze skill zitten op deze repo.
+Promote reviewed draft pages from `../inbox/staging/` to the wiki repo and push them to a dated ingest branch for curator review. This is the explicit sharing decision: nothing reaches the wiki repo before this skill runs. `../inbox/` has no git. The only git operations in this skill are on this repo.
 
-## Wanneer gebruiken
+## When to use
 
-Draai deze skill als de bijdrager de stagingpagina's in Obsidian heeft beoordeeld en alles of een deel met het team wil delen.
+Run this skill when the contributor has reviewed the staging pages in Obsidian and wants to share all or some of them with the team.
 
-## Invoer
+## Input
 
-- **Bijdrager** — naam van de bijdrager, voor de branchnaam en het log. Vraag dit als het niet uit de context af te leiden is.
+- **Contributor** — the contributor's name, for the branch name and the log. Ask for it if it cannot be inferred from context.
 
-## Stappen
+## Steps
 
-### 0. Synchroniseer de wiki met main
+### 0. Sync the wiki with main
 
-Zorg dat de wiki up-to-date is, zodat je niet over wijzigingen van de curator heen schrijft.
+Make sure the wiki is up to date so you don't overwrite curator changes.
 
 ```bash
 git fetch origin
 git merge origin/main
 ```
 
-Bij merge-conflicten: los ze op voordat je verdergaat.
+On merge conflicts: resolve them before continuing.
 
-### 1. Ontdek stagingbestanden
+### 1. Discover staging files
 
-Maak een lijst van alle bestanden in `../inbox/staging/`:
-
-```
-De volgende conceptpagina's staan klaar om te delen:
-
-  - staging/projecten/llm-wiki/index.md  →  wiki/projecten/llm-wiki/index.md
-  - staging/besluiten/2026-07-29-llm-wiki-start-pilot.md  →  wiki/besluiten/...
-  - staging/werkwijze/overlegstructuur.md  →  wiki/werkwijze/overlegstructuur.md
-
-Wil je alle pagina's delen, of alleen specifieke?
-(antwoord: "alle" of geef de bestandsnamen op)
-```
-
-Wacht op het antwoord van de bijdrager voordat je verdergaat.
-
-### 2. Kopieer goedgekeurde pagina's naar de wikirepo
-
-Voor elke goedgekeurde stagingpagina:
-
-1. Kopieer van `../inbox/staging/<pad>` naar `wiki/<pad>` in de wikirepo.
-2. Bestaat er al een wikipagina op dat pad, merge de nieuwe inhoud dan erin en overschrijf niet. Voeg nieuwe secties toe en werk het veld `date-updated` bij.
-3. Verwijder het bestand uit `../inbox/staging/`.
-
-Wijzig geen stagingbestanden die niet zijn goedgekeurd.
-
-### 3. Werk wiki/index.md bij
-
-Voor elke gedeelde projectpagina met een nieuwe of gewijzigde `status`:
-- Werk de rij in de projectentabel bij (laatste besluit, status), of voeg een rij toe voor een nieuw project.
-
-Voor elk gedeeld besluitdocument zonder bijgewerkte projectpagina in dezelfde batch:
-- Lees de frontmatter (`project:`, `besluit:`) en pas dezelfde doorwerking toe als `ingest-note` had gedaan: werk de wikiprojectpagina bij (status, verloop, besluiten) en de indexrij. Zo valt een besluitdocument dat buiten de gewone ingestflow binnenkomt nooit stilzwijgend weg.
-
-### 4. Voeg toe aan wiki/log.md
-
-Voeg een rij toe direct onder de koprij in `wiki/log.md`:
+List all files in `../inbox/staging/`:
 
 ```
-| YYYY-MM-DD | share | <bijdrager> | <stagingbestanden> → <wikipagina's> |
+The following draft pages are ready to share:
+
+  - staging/projects/llm-wiki/index.md  →  wiki/projects/llm-wiki/index.md
+  - staging/decisions/2026-07-29-llm-wiki-start-pilot.md  →  wiki/decisions/...
+  - staging/ways-of-working/meeting-structure.md  →  wiki/ways-of-working/meeting-structure.md
+
+Do you want to share all pages, or only specific ones?
+(answer: "all" or give the file names)
 ```
 
-### 5. Zoek conflictpagina's
+Wait for the contributor's answer before continuing.
 
-Zoek in alle bestanden onder `wiki/` naar `status: conflict` in de frontmatter. Neem pagina's mee die in stap 2 zijn toegevoegd.
+### 2. Copy approved pages to the wiki repo
 
-Zijn er conflictpagina's, toon ze dan als waarschuwing in de samenvatting:
+For each approved staging page:
+
+1. Copy from `../inbox/staging/<path>` to `wiki/<path>` in the wiki repo.
+2. If a wiki page already exists at that path, merge the new content into it and do not overwrite. Add new sections and update the `date-updated` field.
+3. Remove the file from `../inbox/staging/`.
+
+Do not change staging files that have not been approved.
+
+### 3. Update wiki/index.md
+
+For each shared project page with a new or changed `status`:
+- Update the row in the projects table (latest decision, status), or add a row for a new project.
+
+For each shared decision document without an updated project page in the same batch:
+- Read the frontmatter (`project:`, `decision:`) and apply the same follow-through `ingest-note` would have: update the wiki project page (status, history, decisions) and the index row. This way a decision document that arrives outside the normal ingest flow is never silently dropped.
+
+### 4. Add to wiki/log.md
+
+Add a row directly below the header row in `wiki/log.md`:
 
 ```
-⚠️  Conflictpagina's gevonden — curator actie vereist:
-  - wiki/projecten/llm-wiki/index.md
+| YYYY-MM-DD | share | <contributor> | <staging files> → <wiki pages> |
 ```
 
-### 6. Commit, push en merge request aanmaken
+### 5. Look for conflict pages
 
-Geen aparte bevestigingsvraag hier: de goedkeuring in stap 1 (welke pagina's delen) is de bevestiging. Ga direct door.
+Search all files under `wiki/` for `status: conflict` in the frontmatter. Include pages added in step 2.
+
+If there are conflict pages, show them as a warning in the summary:
+
+```
+⚠️  Conflict pages found — curator action required:
+  - wiki/projects/llm-wiki/index.md
+```
+
+### 6. Commit, push and create a merge request
+
+No separate confirmation question here: the approval in step 1 (which pages to share) is the confirmation. Continue directly.
 
 ```bash
 git fetch origin
-if git rev-parse --verify origin/ingest/YYYY-MM-DD-<bijdrager> 2>/dev/null; then
-  git checkout ingest/YYYY-MM-DD-<bijdrager>
-  git merge origin/ingest/YYYY-MM-DD-<bijdrager>
+if git rev-parse --verify origin/ingest/YYYY-MM-DD-<contributor> 2>/dev/null; then
+  git checkout ingest/YYYY-MM-DD-<contributor>
+  git merge origin/ingest/YYYY-MM-DD-<contributor>
 else
-  git checkout -b ingest/YYYY-MM-DD-<bijdrager>
+  git checkout -b ingest/YYYY-MM-DD-<contributor>
 fi
 git add wiki/
-git commit -m "share: <korte omschrijving van wat er gedeeld is>"
-git push origin ingest/YYYY-MM-DD-<bijdrager>
+git commit -m "share: <short description of what was shared>"
+git push origin ingest/YYYY-MM-DD-<contributor>
 ```
 
-Maak daarna een merge request (of pull request) aan met de CLI van jullie git-platform. Pas dit commando aan op het platform van de repo en bewaar de URL die het teruggeeft:
+Then create a merge request (or pull request) with the CLI of your git platform. Adjust this command to the repo's platform and keep the URL it returns:
 
 ```bash
 # GitLab
 glab mr create \
-  --title "share: <korte omschrijving van wat er gedeeld is>" \
-  --source-branch ingest/YYYY-MM-DD-<bijdrager> \
+  --title "share: <short description of what was shared>" \
+  --source-branch ingest/YYYY-MM-DD-<contributor> \
   --target-branch main \
   --label "needs-review"
 
 # GitHub
 gh pr create \
-  --title "share: <korte omschrijving van wat er gedeeld is>" \
-  --head ingest/YYYY-MM-DD-<bijdrager> \
+  --title "share: <short description of what was shared>" \
+  --head ingest/YYYY-MM-DD-<contributor> \
   --base main \
   --label "needs-review"
 ```
 
-### 7. Ruim staging op
+### 7. Clean up staging
 
-Alleen uitvoeren als het aanmaken van de MR/PR in stap 6 is geslaagd en een URL heeft opgeleverd. Mislukt de push of de MR, sla deze stap dan over: staging blijft ongewijzigd, zodat de bijdrager stap 6 opnieuw kan draaien.
+Only run this if creating the MR/PR in step 6 succeeded and returned a URL. If the push or the MR fails, skip this step: staging stays unchanged, so the contributor can run step 6 again.
 
-Ruim alleen de sporen van het delen op, in `../inbox/staging/`:
+Only clean up the traces of sharing, in `../inbox/staging/`:
 
 ```bash
 find ../inbox/staging -name .DS_Store -delete
 find ../inbox/staging -mindepth 1 -type d -empty -delete
 ```
 
-- Verwijder geen bestanden die niet gedeeld zijn: concepten die de bijdrager in stap 1 niet heeft goedgekeurd blijven staan, ook als ze in dezelfde map liggen.
-- Verwijder de map `../inbox/staging/` zelf niet.
-- `find ... -empty -delete` verwijdert eerst de diepste lege mappen en daarna ook de ouders die leeg zijn geworden.
+- Do not delete files that were not shared: drafts the contributor did not approve in step 1 stay, even if they are in the same folder.
+- Do not delete the `../inbox/staging/` folder itself.
+- `find ... -empty -delete` first removes the deepest empty folders and then also the parents that have become empty.
 
-### 8. Bevestig aan de bijdrager
+### 8. Confirm to the contributor
 
 ```
-Gedeeld. De merge request is aangemaakt voor de curator:
+Shared. The merge request has been created for the curator:
 
 <URL>
 ```
 
-Zijn er conflictpagina's gevonden, herinner de curator er dan aan die op te lossen vóór het mergen.
+If conflict pages were found, remind the curator to resolve them before merging.
 
-## Randgevallen
+## Edge cases
 
-- **Geen stagingbestanden gevonden:** meld dit aan de bijdrager en stop. Er is niets te delen.
-- **Merge-conflict met een bestaande wikipagina:** schrijf beide versies in de pagina onder een `> **Conflict:**`-blok, zet `status: conflict` in de frontmatter en markeer het in de samenvatting voor de curator.
-- **De CLI (`glab`/`gh`) geeft een authenticatiefout:** de sessie van de bijdrager is verlopen of nooit ingesteld. Laat de bijdrager zelf inloggen in een eigen terminal (nooit een token in de chat plakken) en probeer stap 6 opnieuw.
+- **No staging files found:** tell the contributor and stop. There is nothing to share.
+- **Merge conflict with an existing wiki page:** write both versions in the page under a `> **Conflict:**` block, set `status: conflict` in the frontmatter and flag it in the summary for the curator.
+- **The CLI (`glab`/`gh`) returns an authentication error:** the contributor's session has expired or was never set up. Have the contributor log in themselves in their own terminal (never paste a token in the chat) and retry step 6.

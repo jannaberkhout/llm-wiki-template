@@ -1,7 +1,7 @@
-# Projecttemplate
+# Project template
 
-Gebruik dit template voor elke nieuwe projectpagina in `wiki/projecten/<slug>/index.md`.
-Kopieer de frontmatter en secties naar een nieuw bestand. Vul in wat bekend is; laat de rest weg.
+Use this template for every new project page in `wiki/projects/<slug>/index.md`.
+Copy the frontmatter and sections into a new file. Fill in what is known; leave out the rest.
 
 ---
 
@@ -19,38 +19,38 @@ sources: []
 ---
 ```
 
-**`status`** — één van: `draft` · `actief` · `gepauzeerd` · `afgerond` · `gestopt`. Pas deze lijst aan als jullie andere statussen gebruiken, en pas dan ook `wiki/index.md` en de lint-skill aan.
+**`status`** — one of: `draft` · `active` · `paused` · `completed` · `stopped`. Adapt this list if you use other statuses, and then also adapt `wiki/index.md` and the lint skill.
 
 ---
 
-## Samenvatting
+## Summary
 
-_Één zin: wat is dit project en wat is de kernvraag._
+_One sentence: what is this project and what is the core question._
 
-## Aanleiding
+## Background
 
-_Waar komt het project vandaan? Welke vraag of aanleiding ging eraan vooraf?_
+_Where does the project come from? Which question or trigger came before it?_
 
-## Doel / kernvraag
+## Goal / core question
 
-_Wat willen we bereiken of begrijpen?_
+_What do we want to achieve or understand?_
 
-## Verloop
+## History
 
-_Korte aantekening per mijlpaal of periode. De agent voegt een rij toe bij elk besluit._
+_Short note per milestone or period. The agent adds a row for every decision._
 
-| Datum | Wat is er gebeurd |
+| Date | What happened |
 |---|---|
 | | |
 
-## Inzichten
+## Insights
 
-_Duurzame leeruitkomsten. Pas invullen bij afronding._
+_Lasting learnings. Fill in only when the project is completed._
 
-## Besluiten
+## Decisions
 
-_Links naar de besluiten in `wiki/besluiten/`._
+_Links to the decisions in `wiki/decisions/`._
 
-## Open vragen
+## Open questions
 
-## Gerelateerd
+## Related

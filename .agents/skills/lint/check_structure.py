@@ -18,14 +18,14 @@ import re
 import sys
 
 WIKI = "wiki"
-CONFIG = os.path.join("schema", "structuur.json")
+CONFIG = os.path.join("schema", "structure.json")
 
-# Contenttypes komen uit schema/structuur.json. Ontbreekt dat bestand, val dan
-# terug op de standaardtemplate (projecten + besluiten).
+# Content types come from schema/structure.json. If that file is missing, fall
+# back to the default template (projects + decisions).
 _DEFAULT_TYPES = [
-    {"key": "projecten", "layout": "dossier", "validate": True, "fields": [], "in_index": True},
-    {"key": "besluiten", "layout": "bestand", "validate": True, "in_index": False,
-     "fields": [{"name": n, "required": True} for n in ("project", "besluit", "datum")]},
+    {"key": "projects", "layout": "folder", "validate": True, "fields": [], "in_index": True},
+    {"key": "decisions", "layout": "file", "validate": True, "in_index": False,
+     "fields": [{"name": n, "required": True} for n in ("project", "decision", "date")]},
 ]
 
 
@@ -161,7 +161,7 @@ def required_fields(t):
 
 def check_s3(files):
     """Schema violations: required frontmatter fields present and non-empty,
-    for every type in structuur.json with validate=true (excluding README.md)."""
+    for every type in structure.json with validate=true (excluding README.md)."""
     by_key = {t["key"]: t for t in TYPES if t.get("validate")}
     violations = []  # (file, missing_fields)
     for f in files:
@@ -184,17 +184,17 @@ def check_s3(files):
 
 
 def check_s4_s5(files):
-    """Index consistency (S4) and status mismatch (S5) for every dossier type
+    """Index consistency (S4) and status mismatch (S5) for every folder-layout type
     with in_index=true against wiki/index.md. Expected row format:
 
-        | [Titel](<map>/<slug>/index.md) | ...extra kolommen... | status |
+        | [Title](<folder>/<slug>/index.md) | ...extra columns... | status |
     """
     index_path = os.path.join(WIKI, "index.md")
     index_content = read(index_path)
     findings_s4, findings_s5 = [], []
 
     for t in TYPES:
-        if t.get("layout") != "dossier" or not t.get("in_index"):
+        if t.get("layout") != "folder" or not t.get("in_index"):
             continue
         key = t["key"]
         index_files = [
@@ -206,9 +206,9 @@ def check_s4_s5(files):
         slugs_in_index = set(re.findall(rf"{re.escape(key)}/([\w\-]+)/index\.md", index_content))
         slugs_actual = {os.path.basename(os.path.dirname(f)) for f in index_files}
         for missing in sorted(slugs_actual - slugs_in_index):
-            findings_s4.append(f"{key}/{missing} niet gevonden in wiki/index.md tabel")
+            findings_s4.append(f"{key}/{missing} not found in wiki/index.md table")
         for extra in sorted(slugs_in_index - slugs_actual):
-            findings_s4.append(f"index.md verwijst naar {key}/{extra} maar die map/index.md bestaat niet")
+            findings_s4.append(f"index.md refers to {key}/{extra} but that folder/index.md does not exist")
 
         for f in index_files:
             slug = os.path.basename(os.path.dirname(f))
@@ -249,47 +249,47 @@ def main():
 
     print(f"Scanned {len(files)} .md files under {WIKI}/\n")
 
-    print("== S1 Gebroken wikilinks (blocker) ==")
+    print("== S1 Broken wikilinks (blocker) ==")
     if broken:
         for f, target in broken:
             print(f"  {f} -> [[{target}]]")
     else:
-        print("  geen")
+        print("  none")
 
-    print("\n== S2 Weespagina's (warning) ==")
+    print("\n== S2 Orphan pages (warning) ==")
     if orphans:
         for f in orphans:
             print(f"  {f}")
     else:
-        print("  geen")
+        print("  none")
 
-    print("\n== S3 Schema-overtredingen (warning) ==")
+    print("\n== S3 Schema violations (warning) ==")
     if s3_violations:
         for f, missing in s3_violations:
-            print(f"  {f} -- mist: {', '.join(missing)}")
+            print(f"  {f} -- missing: {', '.join(missing)}")
     else:
-        print("  geen")
+        print("  none")
 
-    print("\n== S4 Indexinconsistentie (warning) ==")
+    print("\n== S4 Index inconsistency (warning) ==")
     if s4_findings:
         for line in s4_findings:
             print(f"  {line}")
     else:
-        print("  geen")
+        print("  none")
 
-    print("\n== S5 Statusmismatch (warning) ==")
+    print("\n== S5 Status mismatch (warning) ==")
     if s5_findings:
         for line in s5_findings:
             print(f"  {line}")
     else:
-        print("  geen")
+        print("  none")
 
-    print("\n== S6 Onopgeloste conflicten (blocker) ==")
+    print("\n== S6 Unresolved conflicts (blocker) ==")
     if s6_conflicts:
         for f in s6_conflicts:
             print(f"  {f}")
     else:
-        print("  geen")
+        print("  none")
 
 
 if __name__ == "__main__":

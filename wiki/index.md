@@ -1,22 +1,22 @@
 ---
-title: Overzicht
+title: Overview
 status: stub
 generated-by: 
 date-updated: 
 ---
 
-# Overzicht
+# Overview
 
-_Bijgewerkt door agent. Voeg projecten toe via de lokale inbox._
+_Updated by agent. Add projects via the local inbox._
 
 ---
 
-## Projecten
+## Projects
 
-| Project | Laatste besluit | Status |
+| Project | Latest decision | Status |
 |---|---|---|
 
 <!--
-Rijformaat, één per project (de lint-skill leest dit):
-| [Titel](projecten/<slug>/index.md) | [2026-07-29 go](besluiten/2026-07-29-<slug>-<omschrijving>.md) | actief |
+Row format, one per project (the lint skill reads this):
+| [Title](projects/<slug>/index.md) | [2026-07-29 go](decisions/2026-07-29-<slug>-<description>.md) | active |
 -->

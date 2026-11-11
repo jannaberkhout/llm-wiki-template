@@ -1,91 +1,91 @@
 # AGENTS.md — Team Wiki
 
-Dit bestand is de leidende instructieset voor elke agent die in deze repository werkt. Lees het voordat je iets doet. Herschrijf het niet zonder goedkeuring van de curator.
+This file is the leading instruction set for every agent working in this repository. Read it before you do anything. Do not rewrite it without the curator's approval.
 
-> **Template:** dit is de basis voor een teamwiki. Zoek na het kopiëren op `<TEAMNAAM>` en `<REPO-URL>` en vul die in.
+> **Template:** this is the basis for a team wiki. After copying, search for `<TEAM-NAME>` and `<REPO-URL>` and fill them in.
 
-## Wat is deze repository
+## What this repository is
 
-De gecureerde wiki van <TEAMNAAM>: gesynthetiseerde, teamgerichte kennis, afgeleid van ruw materiaal dat een bijdrager eerst lokaal op de eigen machine verzamelt. Ruw materiaal komt nooit in git. Het staat in een gewone lokale map `../inbox/` naast deze repo. De wiki heeft een bredere kring van lezers dan die lokale map en is daarom op paginaniveau geanonimiseerd.
+The curated wiki of <TEAM-NAME>: synthesized, team-oriented knowledge, derived from raw material that a contributor first collects locally on their own machine. Raw material never goes into git. It lives in a plain local folder `../inbox/` next to this repo. The wiki has a wider readership than that local folder and is therefore anonymized at page level.
 
-## Lokale inbox + wiki-indeling
+## Local inbox + wiki layout
 
 ```
-../inbox/                          (alleen lokaal — nooit gecommit; elke bijdrager heeft een eigen map op de eigen machine)
-  raw/                             ruw materiaal dat nog verwerkt moet worden
-  processed/                       na ingest hierheen verplaatst (archief van de originelen)
-  staging/                         door de agent gegenereerde concepten die op goedkeuring wachten
+../inbox/                          (local only — never committed; each contributor has their own folder on their own machine)
+  raw/                             raw material that still has to be processed
+  processed/                       moved here after ingest (archive of the originals)
+  staging/                         agent-generated drafts awaiting approval
 
-./                                 (deze repo — git, bredere kring)
-  wiki/index.md                    dashboard van alle dossiers — altijd actueel houden
-  wiki/log.md                      append-only logboek
-  wiki/projecten/<slug>/           één submap per project
-                                    index.md    de projectpagina
-                                    research/   onderzoeksnotities en rapporten
-                                    bijlagen/   overige documenten
-  wiki/besluiten/                  besluiten per project
-  wiki/werkwijze/                  hoe het team werkt: processen, rollen, afspraken, principes
-  wiki/lint/                       maandelijkse lintrapporten
-  wiki/archive/                    vervangen documenten, bewaard als naslag
-  schema/                          paginatemplates en conventies
-  .agents/skills/                  beschikbare skills; sommige met een *.py-helper (zie hieronder)
-  pyproject.toml, .python-version  uv-omgeving voor die helpers (alleen stdlib, geen dependencies)
+./                                 (this repo — git, wider readership)
+  wiki/index.md                    dashboard of all cases — always keep current
+  wiki/log.md                      append-only log
+  wiki/projects/<slug>/            one subfolder per project
+                                    index.md    the project page
+                                    research/   research notes and reports
+                                    attachments/ other documents
+  wiki/decisions/                  decisions per project
+  wiki/ways-of-working/            how the team works: processes, roles, agreements, principles
+  wiki/lint/                       monthly lint reports
+  wiki/archive/                    superseded documents, kept for reference
+  schema/                          page templates and conventions
+  .agents/skills/                  available skills; some with a *.py helper (see below)
+  pyproject.toml, .python-version  uv environment for those helpers (stdlib only, no dependencies)
 ```
 
-`../inbox/` is een gewone map, geen git-repository. Er is niets om te fetchen, mergen of pushen. Dat is bewust: ruw materiaal en conceptpagina's zijn persoonlijk en blijven op de machine van de bijdrager. De enige git-operaties in dit systeem zitten op deze repo, bij de laatste `share`-stap.
+`../inbox/` is a plain folder, not a git repository. There is nothing to fetch, merge or push. This is deliberate: raw material and draft pages are personal and stay on the contributor's machine. The only git operations in this system are on this repo, at the final `share` step.
 
-**Helperscripts van skills**
-Enkele skills hebben een stdlib-only Python-script naast hun `SKILL.md` (`lint/check_structure.py`, `setup-structuur/setup_structuur.py`, `onboard-contributor/onboard_contributor.py`) dat het mechanische deel van de skill doet: controles, bestanden aanmaken. Draai ze met `uv run .agents/skills/<skill>/<script>.py ...` (zie de `SKILL.md` voor de exacte argumenten). `uv` zet bij eerste gebruik Python en een `.venv` klaar. De `SKILL.md` zegt welke delen nog bij de agent liggen: oordeelsvorming, bevestiging door een mens, git-commits.
+**Skill helper scripts**
+Some skills have a stdlib-only Python script next to their `SKILL.md` (`lint/check_structure.py`, `setup-structure/setup_structure.py`, `onboard-contributor/onboard_contributor.py`) that does the mechanical part of the skill: checks, creating files. Run them with `uv run .agents/skills/<skill>/<script>.py ...` (see the `SKILL.md` for the exact arguments). On first use `uv` sets up Python and a `.venv`. The `SKILL.md` says which parts remain with the agent: judgment, human confirmation, git commits.
 
-## Contentflow
+## Content flow
 
 ```
 ../inbox/raw/  →  ingest-note skill  →  ../inbox/staging/  →  share skill  →  wiki/
-  (ruwe input)      (altijd, lokaal)      (bijdrager beoordeelt   (expliciete       (team ziet
-                                           hier, lokaal)           goedkeuring)       dit)
+  (raw input)       (always, local)       (contributor reviews    (explicit        (team sees
+                                           here, local)            approval)        this)
 ```
 
-De wiki ontvangt alleen content die een bijdrager expliciet heeft goedgekeurd. Staging is de persoonlijke reviewruimte: een lokale map, onzichtbaar voor het team en nooit in git.
+The wiki only receives content that a contributor has explicitly approved. Staging is the personal review space: a local folder, invisible to the team and never in git.
 
-## Regels — altijd volgen
+## Rules — always follow
 
-**Ruw materiaal lezen**
-- Lees uit `../inbox/raw/` en wijzig daar nooit iets.
-- Verplaats een bestand na een geslaagde ingest met `mv` naar `../inbox/processed/`. Verwijder nooit ruwe bestanden.
-- Vergadernotities (`type: meeting` in de frontmatter) vragen om `share: approved` vóór ingest. Ontbreekt dat, of staat er `share: pending`, sla het bestand dan over en noteer dat in het log.
-- Alle andere inboxbestanden worden standaard verwerkt: wie iets in `raw/` zet, deelt het daarmee.
+**Reading raw material**
+- Read from `../inbox/raw/` and never change anything there.
+- After a successful ingest, move a file with `mv` to `../inbox/processed/`. Never delete raw files.
+- Meeting notes (`type: meeting` in the frontmatter) require `share: approved` before ingest. If that is missing, or `share: pending` is set, skip the file and note it in the log.
+- All other inbox files are processed by default: whoever puts something in `raw/` shares it by doing so.
 
-**Wikipagina's schrijven**
-- Namen van bijdragers staan alleen in de frontmatter (`contributed-by:`), nooit in de paginatekst. Dit is niet optioneel.
-- Bronnen staan in de frontmatter (`sources:`) als paden relatief aan `../inbox/`, bijvoorbeeld `raw/2026-07-29-onderwerp.md`.
-- Gebruik de templates in `schema/` voor nieuwe pagina's. Verzin geen frontmattervelden.
-- Herschrijf bestaande paginateksten niet in zijn geheel. Voeg liever secties toe of werk specifieke velden bij.
+**Writing wiki pages**
+- Contributor names appear only in the frontmatter (`contributed-by:`), never in the page text. This is not optional.
+- Sources appear in the frontmatter (`sources:`) as paths relative to `../inbox/`, for example `raw/2026-07-29-topic.md`.
+- Use the templates in `schema/` for new pages. Do not invent frontmatter fields.
+- Do not rewrite existing page texts in their entirety. Prefer adding sections or updating specific fields.
 
-**Logboek**
-- Voeg na elke ingest- of curatie-actie een rij toe aan de tabel in `wiki/log.md`, direct onder de koprij (nieuwste bovenaan). Formaat: `| YYYY-MM-DD | <skill> | <bijdrager of —> | <beschrijving> |`
-- Verwijder of herschrijf nooit logregels.
+**Log**
+- After every ingest or curation action, add a row to the table in `wiki/log.md`, directly below the header row (newest at the top). Format: `| YYYY-MM-DD | <skill> | <contributor or —> | <description> |`
+- Never delete or rewrite log lines.
 
 **Index**
-- Werk `wiki/index.md` bij zodra een dossier is aangemaakt of de `status` van een dossier verandert. Een dossier is een item van een type met `layout: dossier` en `in_index: true` in `schema/structuur.json` (in de standaardtemplate: een project).
+- Update `wiki/index.md` as soon as a case is created or the `status` of a case changes. A case is an item of a type with `layout: folder` and `in_index: true` in `schema/structure.json` (in the default template: a project).
 
-**Mappenstructuur**
-- De mappen onder `wiki/` (de contenttypes) staan in `schema/structuur.json`. Dat bestand is de bron van waarheid; lees het om te weten waar een soort pagina hoort en welk template erbij hoort. Verzin geen eigen mappen.
-- Woorden als "project" en "besluit" in deze instructies en in de skills zijn de begrippen uit de standaardtemplate. Heeft het team andere types gekozen, lees ze dan als de types uit `structuur.json`.
-- Wijzig de structuur alleen via de `setup-structuur` skill, met goedkeuring van de curator.
+**Folder structure**
+- The folders under `wiki/` (the content types) are listed in `schema/structure.json`. That file is the source of truth; read it to know where a kind of page belongs and which template goes with it. Do not invent your own folders.
+- Words like "project" and "decision" in these instructions and in the skills are the concepts from the default template. If the team has chosen other types, read them as the types from `structure.json`.
+- Change the structure only via the `setup-structure` skill, with the curator's approval.
 
-**Conflicten**
-- Laat nooit stilzwijgend inhoud vallen. Spreken twee bronnen elkaar tegen, schrijf dan beide in de pagina onder een duidelijk `> **Conflict:**`-blok en zet `status: conflict` in de frontmatter.
+**Conflicts**
+- Never silently drop content. If two sources contradict each other, write both in the page under a clear `> **Conflict:**` block and set `status: conflict` in the frontmatter.
 
-## Vragen over de wiki beantwoorden
+## Answering questions about the wiki
 
-Als een gebruiker een vraag stelt die uit de wiki te beantwoorden is (over dossiers, besluiten of andere kennis in `wiki/`), laad dan eerst de `answer-from-wiki` skill. Antwoord niet uit je hoofd: zoek altijd in de wiki.
+When a user asks a question that can be answered from the wiki (about cases, decisions or other knowledge in `wiki/`), load the `answer-from-wiki` skill first. Do not answer from memory: always search the wiki.
 
-## Beschikbare skills
+## Available skills
 
-- `.agents/skills/setup-structuur/` — pas de mappenstructuur van de wiki aan op het team (contenttypes, templates, index); eenmalig bij het opzetten, daarna alleen door de curator
-- `.agents/skills/ingest-note/` — verwerk inboxbestanden tot conceptpagina's in staging (lokaal, `../inbox/`)
-- `.agents/skills/share/` — promoveer beoordeelde stagingpagina's naar de wikirepo en push voor beoordeling door de curator
-- `.agents/skills/lint/` — maandelijkse gezondheidscheck: structureel (gebroken links, weespagina's, schema, index) en semantisch (tegenspraken, verouderde claims)
-- `.agents/skills/onboard-contributor/` — onboard een nieuwe bijdrager: inboxmap aanmaken en een persoonlijke clipper-template genereren
-- `.agents/skills/answer-from-wiki/` — beantwoord vragen op basis van de wiki
-- `.agents/skills/update-wiki/` — synchroniseer de wiki met main en toon wat er nieuw is
+- `.agents/skills/setup-structure/` — adapt the wiki's folder structure to the team (content types, templates, index); once at setup, afterwards only by the curator
+- `.agents/skills/ingest-note/` — process inbox files into draft pages in staging (local, `../inbox/`)
+- `.agents/skills/share/` — promote reviewed staging pages to the wiki repo and push for review by the curator
+- `.agents/skills/lint/` — monthly health check: structural (broken links, orphan pages, schema, index) and semantic (contradictions, outdated claims)
+- `.agents/skills/onboard-contributor/` — onboard a new contributor: create the inbox folder and generate a personal clipper template
+- `.agents/skills/answer-from-wiki/` — answer questions based on the wiki
+- `.agents/skills/update-wiki/` — sync the wiki with main and show what is new

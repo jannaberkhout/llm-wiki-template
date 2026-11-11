@@ -4,5 +4,5 @@ Append-only. Agents add entries at the top of the table — newest first. Never 
 
 Format: one row per action, newest row directly below the header row.
 
-| Datum | Skill | Bijdrager | Beschrijving |
+| Date | Skill | Contributor | Description |
 |---|---|---|---|

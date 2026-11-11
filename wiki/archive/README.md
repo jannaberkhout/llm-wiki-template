@@ -1,3 +1,3 @@
 # Archive
 
-Vervangen of niet meer geldende documenten, bewaard als naslag. Verplaats een pagina hierheen in plaats van hem te verwijderen, en laat in de nieuwe pagina een verwijzing staan.
+Superseded or no longer valid documents, kept for reference. Move a page here instead of deleting it, and leave a reference in the new page.

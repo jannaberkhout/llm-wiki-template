@@ -1,96 +1,96 @@
-# <TEAMNAAM> Wiki
+# <TEAM-NAME> Wiki
 
-De gedeelde kennisbase van <TEAMNAAM>. Pagina's hier zijn gecureerd en geanonimiseerd: namen staan alleen in metadata, nooit in de pagina-inhoud zelf.
+The shared knowledge base of <TEAM-NAME>. Pages here are curated and anonymized: names appear only in metadata, never in the page content itself.
 
-## Deze template gebruiken
+## Using this template
 
-1. Kopieer deze map naar een nieuwe repo en geef die de naam van je team.
-2. Zoek in de hele repo op `<TEAMNAAM>` en `<REPO-URL>` en vul ze in.
-3. Draai de **setup-structuur skill**. Die vraagt hoe jullie team werkt (projecten? klanten en gesprekken? kandidaten?) en past de mappen, templates, het dashboard en de instructies daarop aan. Handmatig kan ook: pas `schema/structuur.json` aan en draai `uv run .agents/skills/setup-structuur/setup_structuur.py apply`.
-4. Pas de statussen en besluitwaarden in de gegenereerde templates in `schema/` aan op jullie eigen begrippen.
-5. Wijs een curator aan en draai de **onboard-contributor skill** voor jezelf.
-6. Verwijder dit hoofdstuk uit de README.
+1. Copy this folder to a new repo and name it after your team.
+2. Search the whole repo for `<TEAM-NAME>` and `<REPO-URL>` and fill them in.
+3. Run the **setup-structure skill**. It asks how your team works (projects? clients and conversations? candidates?) and adapts the folders, templates, dashboard and instructions accordingly. Doing it by hand also works: edit `schema/structure.json` and run `uv run .agents/skills/setup-structure/setup_structure.py apply`.
+4. Adapt the statuses and decision values in the generated templates in `schema/` to your own terms.
+5. Appoint a curator and run the **onboard-contributor skill** for yourself.
+6. Remove this section from the README.
 
-## Nieuw? Begin hier
+## New? Start here
 
-**Stap 1 — Toegang**
+**Step 1 — Access**
 
-Vraag toegang aan tot de repo (<REPO-URL>) bij de curator.
+Ask the curator for access to the repo (<REPO-URL>).
 
-**Stap 2 — Onboarding**
+**Step 2 — Onboarding**
 
-Draai de **onboard-contributor skill** met jouw naam. Die maakt twee dingen aan:
+Run the **onboard-contributor skill** with your name. It creates two things:
 
-1. Jouw lokale inbox-map naast deze repo (`../inbox/` met `raw/`, `processed/`, `staging/`). Puur lokaal, nooit gecommit.
-2. Een op maat gemaakt Obsidian Web Clipper-template (`wiki-clipper-<naam>.json`).
+1. Your local inbox folder next to this repo (`../inbox/` with `raw/`, `processed/`, `staging/`). Purely local, never committed.
+2. A tailored Obsidian Web Clipper template (`wiki-clipper-<name>.json`).
 
-**Stap 3 — Gereedschap**
+**Step 3 — Tools**
 
-- **Obsidian** — open de `../inbox/`-map als vault
-- **Obsidian Web Clipper** — installeer de browserextensie en importeer jouw `.json`-template
+- **Obsidian** — open the `../inbox/` folder as a vault
+- **Obsidian Web Clipper** — install the browser extension and import your `.json` template
 
-## Hoe werkt het bijdragen?
+## How does contributing work?
 
 ```
-jouw inbox     →  ingest skill  →  jouw staging   →  share skill  →  wiki
-(../inbox/raw/,                    (../inbox/staging/,                (hier)
- lokaal)                            jij beoordeelt,
-                                     lokaal)
+your inbox     →  ingest skill  →  your staging   →  share skill  →  wiki
+(../inbox/raw/,                    (../inbox/staging/,                (here)
+ local)                             you review,
+                                     local)
 ```
 
-`../inbox/` is een gewone map, geen git-repo. Alles daar blijft op jouw eigen machine.
+`../inbox/` is a plain folder, not a git repo. Everything there stays on your own machine.
 
-**Eigen notities** — maak een `.md`-bestand aan in `../inbox/raw/` met de naamconventie `YYYY-MM-DD-onderwerp.md`. Minimale frontmatter:
+**Your own notes** — create a `.md` file in `../inbox/raw/` using the naming convention `YYYY-MM-DD-topic.md`. Minimal frontmatter:
 
 ```yaml
 ---
 date: 2026-07-29
-context: notitie / research / besluit / vergadering
+context: note / research / decision / meeting
 ---
 ```
 
-**Webpagina's** — gebruik de Web Clipper. Die slaat de pagina op in `../inbox/raw/` met de juiste frontmatter.
+**Web pages** — use the Web Clipper. It saves the page in `../inbox/raw/` with the right frontmatter.
 
-**Vergadernotities** — zet `type: meeting` en `share: approved` in de frontmatter. Zonder die goedkeuring slaat de ingest ze over.
+**Meeting notes** — set `type: meeting` and `share: approved` in the frontmatter. Without that approval, ingest skips them.
 
-## Van inbox naar wiki
+## From inbox to wiki
 
-1. Leg bestanden neer in `../inbox/raw/` (of via de Web Clipper)
-2. Draai de **ingest-note skill**: de agent maakt conceptpagina's in `../inbox/staging/`
-3. Bekijk de concepten in Obsidian
-4. Draai de **share skill**: goedgekeurde pagina's gaan naar een branch in deze repo
-5. De curator beoordeelt het merge request en merget naar main
+1. Put files in `../inbox/raw/` (or via the Web Clipper)
+2. Run the **ingest-note skill**: the agent creates draft pages in `../inbox/staging/`
+3. Review the drafts in Obsidian
+4. Run the **share skill**: approved pages go to a branch in this repo
+5. The curator reviews the merge request and merges to main
 
-Niets bereikt de wiki zonder jouw expliciete keuze in stap 4 en de goedkeuring van de curator in stap 5.
+Nothing reaches the wiki without your explicit choice in step 4 and the curator's approval in step 5.
 
-## Wat staat waar?
+## What lives where?
 
-| Map | Inhoud |
+| Folder | Contents |
 |---|---|
-| `wiki/index.md` | Dashboard: alle dossiers met status |
-| `wiki/projecten/` | Eén submap per project |
-| `wiki/besluiten/` | Besluiten per project |
-| `wiki/werkwijze/` | Hoe het team werkt: processen, rollen, afspraken, principes |
-| `wiki/log.md` | Logboek van alle agent-acties |
-| `wiki/lint/` | Maandelijkse kwaliteitsrapporten |
-| `wiki/archive/` | Vervangen documenten, bewaard als naslag |
-| `schema/` | Templates voor nieuwe pagina's |
-| `.agents/skills/` | Skills voor agents |
+| `wiki/index.md` | Dashboard: all cases with status |
+| `wiki/projects/` | One subfolder per project |
+| `wiki/decisions/` | Decisions per project |
+| `wiki/ways-of-working/` | How the team works: processes, roles, agreements, principles |
+| `wiki/log.md` | Log of all agent actions |
+| `wiki/lint/` | Monthly quality reports |
+| `wiki/archive/` | Superseded documents, kept for reference |
+| `schema/` | Templates for new pages |
+| `.agents/skills/` | Skills for agents |
 
-## Rollen en rechten
+## Roles and permissions
 
-| Actie | Contributor | Curator |
+| Action | Contributor | Curator |
 |---|---|---|
-| Notities toevoegen aan inbox | Ja | — |
-| Ingest-note skill draaien | Ja | — |
-| Share skill draaien | Ja | — |
-| Wiki-bestanden direct bewerken | Nee | Ja |
-| Skills bewerken (`.agents/skills/`) | Nee | Ja |
-| MRs mergen naar main | Nee | Ja |
-| Lint skill draaien | Nee | Ja |
+| Add notes to inbox | Yes | — |
+| Run ingest-note skill | Yes | — |
+| Run share skill | Yes | — |
+| Edit wiki files directly | No | Yes |
+| Edit skills (`.agents/skills/`) | No | Yes |
+| Merge MRs to main | No | Yes |
+| Run lint skill | No | Yes |
 
-Wiki-bestanden worden uitsluitend via skills bijgewerkt, nooit handmatig door contributors.
+Wiki files are updated exclusively via skills, never manually by contributors.
 
-## Vragen of correcties?
+## Questions or corrections?
 
-Maak een issue aan in deze repo of spreek de curator aan.
+Create an issue in this repo or contact the curator.

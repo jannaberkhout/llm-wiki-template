@@ -5,57 +5,57 @@ description: Sync the wiki with main and show what's new since the last sync —
 
 # Skill: update-wiki
 
-Synchroniseer deze repo met `main` en meld wat er veranderd is. Er wordt niets geschreven: dit is een read-only sync, handig als een bijdrager wil bijlezen voordat hij in Obsidian gaat browsen, of wil weten wat er nieuw is.
+Sync this repo with `main` and report what has changed. Nothing is written: this is a read-only sync, useful when a contributor wants to catch up before browsing in Obsidian, or wants to know what is new.
 
-## Wanneer gebruiken
+## When to use
 
-Draai deze skill als een bijdrager vraagt om "de wiki bij te werken" of te synchroniseren, of wil weten wat er nieuw is, zonder een andere skill te vragen. De andere skills synchroniseren zelf al als stap 0. Deze skill is voor het geval synchroniseren het enige is dat gevraagd wordt.
+Run this skill when a contributor asks to "update the wiki" or sync it, or wants to know what is new, without asking for another skill. The other skills already sync themselves as step 0. This skill is for when syncing is the only thing asked.
 
-## Invoer
+## Input
 
-Geen.
+None.
 
-## Stappen
+## Steps
 
-### 0. Onthoud de huidige staat
+### 0. Remember the current state
 
-Onthoud vóór het fetchen de huidige HEAD en lees de huidige inhoud van `wiki/log.md`.
+Before fetching, remember the current HEAD and read the current contents of `wiki/log.md`.
 
 ```bash
 git rev-parse HEAD
 ```
 
-### 1. Synchroniseer met main
+### 1. Sync with main
 
 ```bash
 git fetch origin
 git merge origin/main
 ```
 
-Bij merge-conflicten: los ze op voordat je verdergaat.
+On merge conflicts: resolve them before continuing.
 
-### 2. Bepaal of er iets veranderd is
+### 2. Determine whether anything changed
 
-Vergelijk de HEAD van vóór stap 1 met de huidige HEAD.
+Compare the HEAD from before step 1 with the current HEAD.
 
-- **Ongewijzigd:** meld "De wiki is al up-to-date. Geen nieuwe wijzigingen." en stop.
-- **Gewijzigd:** ga door naar stap 3.
+- **Unchanged:** report "The wiki is already up to date. No new changes." and stop.
+- **Changed:** continue to step 3.
 
-### 3. Toon een samenvatting van wat er nieuw is
+### 3. Show a summary of what is new
 
-Vergelijk de inhoud van `wiki/log.md` van vóór en na de merge. Toon de rijen die nieuw bovenaan de tabel staan. Dat zijn precies de acties die andere bijdragers of de curator sinds de laatste sync hebben gedaan.
+Compare the contents of `wiki/log.md` from before and after the merge. Show the rows that are new at the top of the table. Those are exactly the actions other contributors or the curator have taken since the last sync.
 
 ```
-De wiki is bijgewerkt. Nieuw sinds je laatste sync:
+The wiki has been updated. New since your last sync:
 
-| 2026-09-05 | share | anders | ... |
-| 2026-09-04 | share | iemand | ... |
+| 2026-09-05 | share | someone-else | ... |
+| 2026-09-04 | share | somebody | ... |
 ```
 
-**Terugval (zeldzaam):** is `wiki/log.md` zelf niet gewijzigd terwijl de HEAD wel veranderde (bijv. een fix van de curator zonder logregel), gebruik dan `git log --oneline <oude-HEAD>..HEAD` en toon de commit-onderwerpen als samenvatting.
+**Fallback (rare):** if `wiki/log.md` itself did not change while HEAD did (e.g. a curator fix without a log row), use `git log --oneline <old-HEAD>..HEAD` and show the commit subjects as the summary.
 
-## Randgevallen
+## Edge cases
 
-- **Merge-conflicten:** los ze op zoals bij de andere skills en vermeld in de samenvatting welke bestanden een conflict hadden en hoe je het hebt opgelost.
-- **`wiki/log.md` zelf heeft een conflict:** los dat eerst op en gebruik daarna de terugval (`git log --oneline`) voor de samenvatting, in plaats van tabelrijen te vergelijken op een net-geconflicteerd bestand.
-- **Niet in de repo-root:** meld dit en stop. Deze skill verwacht dat je in de root van de wikirepo werkt.
+- **Merge conflicts:** resolve them as in the other skills and mention in the summary which files had a conflict and how you resolved it.
+- **`wiki/log.md` itself has a conflict:** resolve that first and then use the fallback (`git log --oneline`) for the summary, instead of comparing table rows on a file that just had a conflict.
+- **Not in the repo root:** report this and stop. This skill expects you to work in the root of the wiki repo.

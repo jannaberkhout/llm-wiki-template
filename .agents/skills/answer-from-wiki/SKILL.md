@@ -4,56 +4,56 @@ description: Synthesize answers from the team wiki knowledge base
 ---
 # Answer From Wiki
 
-Gebruik deze skill om een vraag van een gebruiker te beantwoorden met de wiki.
+Use this skill to answer a user's question using the wiki.
 
-## Werkwijze
+## Procedure
 
-### 0. Synchroniseer de wikirepo met `main`
+### 0. Sync the wiki repo with `main`
 
-Doe dit voordat je zoekt.
+Do this before searching.
 
 ```bash
 git fetch origin
 git merge origin/main
 ```
 
-Bij merge-conflicten: los ze op voordat je verdergaat.
+On merge conflicts: resolve them before continuing.
 
-### 0.5. Vraag om verduidelijking bij onduidelijke vragen
+### 0.5. Ask for clarification when a question is unclear
 
-ALS de vraag meerdere interpretaties toelaat, **moet je eerst doorvragen** en niet meteen antwoorden.
+IF the question allows more than one interpretation, you **must ask first** instead of answering right away.
 
-**Wanneer doorvragen** — bij onduidelijkheid in:
+**When to ask** — when it is unclear:
 
-1. **Term of begrip**: het woord kan meerdere dingen betekenen in de wiki.
-   - *Voorbeeld*: "Hoeveel notities staan er in de wiki?" → Wat versta je onder "notities"? Pagina's in `wiki/projecten/`, besluiten in `wiki/besluiten/`, of alle markdown-bestanden?
-2. **Bereik**: niet duidelijk of de vraag over één project, een deel of de hele wiki gaat.
-   - *Voorbeeld*: "Wat is de status?" → Heb je een specifiek project in gedachten, of bedoel je de hele wiki?
-3. **Tijdspunt**: de vraag kan een specifiek moment bedoelen of nu.
-   - *Voorbeeld*: "Welke besluiten zijn er genomen?" → Alleen de laatste, of de hele geschiedenis?
-4. **Context**: de vraag is te breed voor een zinvol antwoord.
-   - *Voorbeeld*: "Vertel me over project X" → Wil je de samenvatting, de besluiten, de research of alles?
+1. **Term or concept**: the word can mean several things in the wiki.
+   - *Example*: "How many notes are in the wiki?" → What do you mean by "notes"? Pages in `wiki/projects/`, decisions in `wiki/decisions/`, or all markdown files?
+2. **Scope**: it is unclear whether the question is about one project, a part, or the whole wiki.
+   - *Example*: "What's the status?" → Do you have a specific project in mind, or do you mean the whole wiki?
+3. **Point in time**: the question may mean a specific moment or now.
+   - *Example*: "Which decisions have been made?" → Only the latest, or the whole history?
+4. **Context**: the question is too broad for a useful answer.
+   - *Example*: "Tell me about project X" → Do you want the summary, the decisions, the research, or everything?
 
-**Hoe doorvragen**
-- Maximaal 1-2 vragen.
-- Benoem kort welke interpretaties mogelijk zijn, zodat de gebruiker kan kiezen.
-- Je hoeft geen opties voor te leggen. "Bedoel je X, Y of Z?" is goed.
-- Is de vraag al specifiek genoeg: antwoord direct.
+**How to ask**
+- At most 1-2 questions.
+- Briefly name the possible interpretations so the user can choose.
+- You don't need to offer options. "Do you mean X, Y or Z?" is fine.
+- If the question is already specific enough: answer directly.
 
-## Zoeken en antwoorden
+## Searching and answering
 
-Na eventuele verduidelijking (of direct als de vraag specifiek is):
+After any clarification (or directly if the question is specific):
 
-1. Lees `schema/structuur.json` om te weten welke soorten pagina's de wiki heeft en in welke map ze staan. Zoek daarna in `wiki/`.
-2. Gebruik `../inbox/processed/` en `../inbox/raw/` als aanvullend bewijs wanneer nodig.
-3. Geef de voorkeur aan synthese boven ruwe fragmenten.
-4. Benoem onzekerheid als notities onvolledig zijn of elkaar tegenspreken.
-5. Verwijs naar de relevante gecureerde pagina's.
-6. Levert het antwoord een duurzame synthese op, bied dan aan om een wikipagina aan te maken of bij te werken.
+1. Read `schema/structure.json` to learn which kinds of pages the wiki has and which folder they are in. Then search `wiki/`.
+2. Use `../inbox/processed/` and `../inbox/raw/` as supporting evidence when needed.
+3. Prefer synthesis over raw fragments.
+4. State uncertainty when notes are incomplete or contradict each other.
+5. Refer to the relevant curated pages.
+6. If the answer produces a lasting synthesis, offer to create or update a wiki page.
 
-## Antwoordstijl
+## Answer style
 
-- Begin met het antwoord.
-- Citeer het sterkste lokale bewijs.
-- Houd letterlijke citaten kort.
-- Maak onderscheid tussen wat de wiki zegt en wat je zelf afleidt.
+- Start with the answer.
+- Quote the strongest local evidence.
+- Keep verbatim quotes short.
+- Distinguish between what the wiki says and what you infer yourself.
