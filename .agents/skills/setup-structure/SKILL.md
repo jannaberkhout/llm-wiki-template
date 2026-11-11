@@ -18,6 +18,22 @@ Only the curator runs this skill.
 
 ## Steps
 
+### 0. Team name and repo URL (first run only)
+
+If the repo still contains the placeholders `<TEAM-NAME>` and `<REPO-URL>` (check with `grep -rn "<TEAM-NAME>\|<REPO-URL>" --exclude-dir=.git --exclude-dir=.venv .`), ask the curator for:
+
+1. the **team name** (as it should appear in titles and texts);
+2. the **repo URL** (the clone URL, for example `https://github.com/org/team-wiki.git`; `git remote get-url origin` can suggest it).
+
+Then run:
+
+```bash
+uv run .agents/skills/setup-structure/setup_structure.py identity --team "Team name" --repo-url "https://..." --dry-run   # shows which files change
+uv run .agents/skills/setup-structure/setup_structure.py identity --team "Team name" --repo-url "https://..."
+```
+
+This replaces the placeholders in README, AGENTS.md, the other skills and the wiki pages, and records both values under `"team"` in `schema/structure.json`. It also points the git remote `origin` at the new URL (`git remote set-url`, or `git remote add` if there is no origin yet). That only changes local git config; nothing is pushed. Tell the curator what will happen to the remote and add `--no-remote` if they would rather keep it as it is. If the placeholders are already gone, skip this step.
+
 ### 1. Understand how the team works
 
 Ask the questions one at a time, in plain language, and adapt to the answers. Not all at once.
