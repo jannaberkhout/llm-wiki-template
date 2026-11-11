@@ -2,7 +2,7 @@
 
 This file is the leading instruction set for every agent working in this repository. Read it before you do anything. Do not rewrite it without the curator's approval.
 
-> **Template:** this is the basis for a team wiki. After copying, search for `<TEAM-NAME>` and `<REPO-URL>` and fill them in.
+> **Template:** this is the basis for a team wiki. After copying, run the `setup-structure` skill: it fills in the team name and repo URL placeholders.
 
 ## What this repository is
 

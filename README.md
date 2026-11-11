@@ -5,11 +5,10 @@ The shared knowledge base of <TEAM-NAME>. Pages here are curated and anonymized:
 ## Using this template
 
 1. Copy this folder to a new repo and name it after your team.
-2. Search the whole repo for `<TEAM-NAME>` and `<REPO-URL>` and fill them in.
-3. Run the **setup-structure skill**. It asks how your team works (projects? clients and conversations? candidates?) and adapts the folders, templates, dashboard and instructions accordingly. Doing it by hand also works: edit `schema/structure.json` and run `uv run .agents/skills/setup-structure/setup_structure.py apply`.
-4. Adapt the statuses and decision values in the generated templates in `schema/` to your own terms.
-5. Appoint a curator and run the **onboard-contributor skill** for yourself.
-6. Remove this section from the README.
+2. Run the **setup-structure skill**. It first asks for your team name and repo URL and fills them in everywhere, then asks how your team works (projects? clients and conversations? candidates?) and adapts the folders, templates, dashboard and instructions accordingly. Doing it by hand also works: run `uv run .agents/skills/setup-structure/setup_structure.py identity --team "Name" --repo-url URL`, edit `schema/structure.json` and run `uv run .agents/skills/setup-structure/setup_structure.py apply`.
+3. Adapt the statuses and decision values in the generated templates in `schema/` to your own terms.
+4. Appoint a curator and run the **onboard-contributor skill** for yourself.
+5. Remove this section from the README.
 
 ## New? Start here
 

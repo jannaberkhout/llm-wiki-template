@@ -3,6 +3,7 @@
 
     uv run .agents/skills/setup-structure/setup_structure.py check
     uv run .agents/skills/setup-structure/setup_structure.py apply [--dry-run]
+    uv run .agents/skills/setup-structure/setup_structure.py identity --team "Name" --repo-url URL [--dry-run] [--no-remote]
 
 `check` validates structure.json and shows what to expect from `apply`.
 `apply` creates the folder + README per type, generates missing templates,
@@ -10,6 +11,13 @@ refreshes the folder lists in AGENTS.md and README.md and creates an empty
 wiki/index.md if it has no rows yet. A type with `"renamed_from"` is renamed
 with `git mv` (or os.rename). Nothing is ever deleted; existing folders that
 are no longer in the config are only reported.
+
+`identity` replaces the placeholders for team name and repo URL throughout the
+repo (README, AGENTS.md, skills, wiki pages) and stores them in
+schema/structure.json under "team". It also points the git remote `origin` at
+the new URL (`git remote set-url`, or `git remote add` if there is no origin
+yet); use --no-remote to leave git alone. It skips this skill's own folder, whose
+text uses the placeholders as illustration.
 
 Stdlib only. Run from the repo root.
 """
@@ -229,7 +237,89 @@ def apply(types, dry):
     return log, warn
 
 
+PLACEHOLDERS = {"team": "<TEAM-NAME>", "repo_url": "<REPO-URL>"}
+SKIP_DIRS = {".git", ".venv", "node_modules", "__pycache__"}
+SKIP_PREFIX = os.path.join(".agents", "skills", "setup-structure")
+
+
+def set_remote(repo_url, dry):
+    """Point `origin` at repo_url (local git config only; nothing is pushed)."""
+    pre = "(dry) " if dry else ""
+    try:
+        cur = subprocess.run(["git", "remote", "get-url", "origin"], capture_output=True, text=True)
+    except FileNotFoundError:
+        return [pre + "git not found; remote not changed"]
+    if cur.returncode == 0:
+        if cur.stdout.strip() == repo_url:
+            return [pre + "git remote origin already correct"]
+        cmd, msg = ["git", "remote", "set-url", "origin", repo_url], \
+            f"git remote set-url origin {repo_url} (was {cur.stdout.strip()})"
+    else:
+        cmd, msg = ["git", "remote", "add", "origin", repo_url], f"git remote add origin {repo_url}"
+    if not dry:
+        r = subprocess.run(cmd, capture_output=True, text=True)
+        if r.returncode != 0:
+            return [f"NOTE: {' '.join(cmd)} failed: {r.stderr.strip()}"]
+    return [pre + msg]
+
+
+def identity(team, repo_url, dry):
+    """Replace <TEAM-NAME> / <REPO-URL> in all text files; record them in structure.json."""
+    values = {PLACEHOLDERS["team"]: team, PLACEHOLDERS["repo_url"]: repo_url}
+    log = []
+    for root, dirs, files in os.walk("."):
+        dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+        if os.path.relpath(root, ".").startswith(SKIP_PREFIX):
+            continue
+        for name in files:
+            path = os.path.join(root, name)
+            try:
+                with open(path, encoding="utf-8") as fh:
+                    text = fh.read()
+            except (UnicodeDecodeError, OSError):
+                continue
+            new = text
+            for ph, val in values.items():
+                new = new.replace(ph, val)
+            if new != text:
+                log.append(("(dry) " if dry else "") + f"update {os.path.relpath(path, '.')}")
+                if not dry:
+                    with open(path, "w", encoding="utf-8") as fh:
+                        fh.write(new)
+    with open(CONFIG, encoding="utf-8") as fh:
+        cfg = json.load(fh)
+    cfg["team"] = {"name": team, "repo_url": repo_url}
+    log.append(("(dry) " if dry else "") + f"record team in {CONFIG}")
+    if not dry:
+        with open(CONFIG, "w", encoding="utf-8") as fh:
+            json.dump(cfg, fh, indent=2, ensure_ascii=False)
+            fh.write("\n")
+    if "--no-remote" not in sys.argv:
+        log += set_remote(repo_url, dry)
+    return log
+
+
+def arg_value(flag):
+    if flag in sys.argv:
+        i = sys.argv.index(flag)
+        if i + 1 < len(sys.argv):
+            return sys.argv[i + 1]
+    return None
+
+
 def main():
+    if len(sys.argv) >= 2 and sys.argv[1] == "identity":
+        team, url = arg_value("--team"), arg_value("--repo-url")
+        if not team or not url:
+            print("error: identity needs --team and --repo-url", file=sys.stderr)
+            sys.exit(2)
+        if not os.path.exists(CONFIG):
+            print("error: run from the repo root", file=sys.stderr)
+            sys.exit(1)
+        dry = "--dry-run" in sys.argv
+        for l in identity(team, url, dry):
+            print(" ", l)
+        sys.exit(0)
     if len(sys.argv) < 2 or sys.argv[1] not in ("check", "apply"):
         print(__doc__)
         sys.exit(2)
