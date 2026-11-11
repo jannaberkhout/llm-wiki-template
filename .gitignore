@@ -4,3 +4,4 @@
 .venv/
 schema/clipper-templates/*
 !schema/clipper-templates/_base.json
+uv.lock
